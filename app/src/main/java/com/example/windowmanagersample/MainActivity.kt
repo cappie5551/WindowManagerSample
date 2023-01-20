@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:$packageName")
         )
+
+        val getContent = registerForActivityResult()
+
         startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
     }
 
@@ -51,6 +54,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isOverlayGranted() =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
+        Settings.canDrawOverlays(this)
 
 }
