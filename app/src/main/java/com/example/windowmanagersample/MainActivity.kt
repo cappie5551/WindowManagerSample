@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.windowmanagersample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -38,7 +39,11 @@ class MainActivity : AppCompatActivity() {
             Uri.parse("package:$packageName")
         )
 
-        val getContent = registerForActivityResult()
+        val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (!isOverlayGranted()) {
+                finish()
+            }
+        }
 
         startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
     }
