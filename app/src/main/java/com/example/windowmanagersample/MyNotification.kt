@@ -24,7 +24,7 @@ object MyNotification {
         )
 
         val pendingIntent = PendingIntent.getActivity(
-            context, 0, Intent(context, ACTIVITY), 0
+            context, 0, Intent(context, ACTIVITY), PendingIntent.FLAG_IMMUTABLE
         )
 
         return Notification.Builder(context, CHANNEL_ID)

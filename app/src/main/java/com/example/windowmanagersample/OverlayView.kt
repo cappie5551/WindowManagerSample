@@ -9,7 +9,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 
-class OverlayView(
+class OverlayView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyle: Int = 0

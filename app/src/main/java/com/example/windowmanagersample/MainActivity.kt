@@ -24,7 +24,21 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        requestOverlayPermission()
+
         // トグルボタンの設定
+        binding.toggleButton.apply {
+            isChecked = OverlayService.isActive
+            setOnCheckedChangeListener { _, isChecked ->
+                MyLog.e(isChecked.toString())
+                if (isChecked) {
+                    OverlayService.start(this@MainActivity)
+                } else {
+                    OverlayService.stop(this@MainActivity)
+                }
+
+            }
+        }
     }
 
     private fun requestOverlayPermission() {
@@ -45,18 +59,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
+        getContent.launch(intent)
+
+        // 古い方法
+//        startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
-            if (!isOverlayGranted()) {
-                // オーバーレイ設定画面から戻ってきてもオーバーレイが許可されていない場合はアプリを終了する
-                finish()
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
+//            if (!isOverlayGranted()) {
+//                // オーバーレイ設定画面から戻ってきてもオーバーレイが許可されていない場合はアプリを終了する
+//                finish()
+//            }
+//        }
+//    }
 
     private fun isOverlayGranted() =
         Settings.canDrawOverlays(this)
