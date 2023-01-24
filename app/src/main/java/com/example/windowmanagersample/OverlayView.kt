@@ -68,13 +68,16 @@ class OverlayView @JvmOverloads constructor(
         imageView!!.setImageResource(R.drawable.cat)
 
         // 画像の大きさ
-        val imageWidth = 300
-        val imageHeight = 300
+        val imageWidth = 300.toDp().toPx()
+        val imageHeight = 300.toDp().toPx()
 
         val layoutParams = FrameLayout.LayoutParams(imageWidth, imageHeight)
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL
-        layoutParams.marginEnd = 100
-        layoutParams.marginStart = 100
+        layoutParams.setMargins(
+            100.toDp().toPx(),
+            200.toDp().toPx(),
+            100.toDp().toPx(),
+            100.toDp().toPx())
 
         imageView!!.layoutParams = layoutParams
     }

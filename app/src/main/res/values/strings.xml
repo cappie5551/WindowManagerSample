@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WindowManagerSample</string>
+    <string name="zoom">拡大</string>
+    <string name="zoom_out">縮小</string>
 </resources>
