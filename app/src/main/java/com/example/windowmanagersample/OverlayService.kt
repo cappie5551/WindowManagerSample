@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.widget.ImageView
 
 class OverlayService : Service() {
     companion object {
@@ -31,6 +32,7 @@ class OverlayService : Service() {
     }
 
     private lateinit var overlayView: OverlayView
+    private lateinit var ivCat: ImageView
 
     override fun onCreate() {
         // Start as a foreground service
@@ -40,7 +42,6 @@ class OverlayService : Service() {
 
         overlayView = OverlayView.create(this)
         MyLog.e( "onCreate end")
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

@@ -4,9 +4,12 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 
 class OverlayView @JvmOverloads constructor(
@@ -14,6 +17,7 @@ class OverlayView @JvmOverloads constructor(
     attributeSet: AttributeSet? = null,
     defStyle: Int = 0
 ) : FrameLayout(context, attributeSet, defStyle) {
+
 
     companion object {
         // creates an instance of OverlayView
@@ -33,10 +37,18 @@ class OverlayView @JvmOverloads constructor(
         PixelFormat.TRANSLUCENT
     )
 
+    private var imageView: ImageView? = null
+
+
     // starts displaying this view as overlay
     @Synchronized
     fun show() {
         if (!this.isShown) {
+
+            if (imageView == null) {
+                createImageView()
+                this.addView(imageView)
+            }
             windowManager.addView(this, layoutParams)
         }
     }
@@ -48,4 +60,22 @@ class OverlayView @JvmOverloads constructor(
         }
     }
 
+    private fun createImageView() {
+        // ImageViewのインスタンスを作成
+        imageView = ImageView(context)
+
+        // 画像を指定
+        imageView!!.setImageResource(R.drawable.cat)
+
+        // 画像の大きさ
+        val imageWidth = 300
+        val imageHeight = 300
+
+        val layoutParams = FrameLayout.LayoutParams(imageWidth, imageHeight)
+        layoutParams.gravity = Gravity.CENTER_HORIZONTAL
+        layoutParams.marginEnd = 100
+        layoutParams.marginStart = 100
+
+        imageView!!.layoutParams = layoutParams
+    }
 }
