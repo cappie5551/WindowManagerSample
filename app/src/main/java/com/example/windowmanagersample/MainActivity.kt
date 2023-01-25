@@ -39,6 +39,16 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+
+        // 拡大ボタンの設定
+        binding.ivZoomInButton.setOnClickListener {
+            OverlayService.zoomIn(this)
+        }
+
+        // 縮小ボタンの設定
+        binding.ivZoomOutButton.setOnClickListener {
+            OverlayService.zoomOut(this)
+        }
     }
 
     private fun requestOverlayPermission() {

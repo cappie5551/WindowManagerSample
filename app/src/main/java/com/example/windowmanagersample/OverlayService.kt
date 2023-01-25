@@ -12,6 +12,9 @@ class OverlayService : Service() {
         private const val ACTION_SHOW = "SHOW"
         private const val  ACTION_HIDE = "HIDE"
 
+        private const val ACTION_ZOOM_IN = "ZOOM_IN"
+        private const val ACTION_ZOOM_OUT = "ZOOM_OUT"
+
         fun start(context: Context) {
             val intent = Intent(context, OverlayService::class.java).apply {
                 action = ACTION_SHOW
@@ -22,6 +25,20 @@ class OverlayService : Service() {
         fun stop(context: Context) {
             val intent = Intent(context, OverlayService::class.java).apply {
                 action = ACTION_HIDE
+            }
+            context.startService(intent)
+        }
+
+        fun zoomIn(context: Context) {
+            val intent = Intent(context, OverlayService::class.java).apply {
+                action = ACTION_ZOOM_IN
+            }
+            context.startService(intent)
+        }
+
+        fun zoomOut(context: Context) {
+            val intent = Intent(context, OverlayService::class.java).apply {
+                action = ACTION_ZOOM_OUT
             }
             context.startService(intent)
         }
@@ -55,6 +72,12 @@ class OverlayService : Service() {
                     isActive = false
                     overlayView.hide()
                     stopSelf()
+                }
+                ACTION_ZOOM_IN -> {
+                    overlayView.zoomIn()
+                }
+                ACTION_ZOOM_OUT -> {
+                    overlayView.zoomOut()
                 }
                 else -> {
                     MyLog.e("Need action property to start ${OverlayService::class.java.simpleName}")

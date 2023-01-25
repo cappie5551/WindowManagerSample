@@ -39,6 +39,9 @@ class OverlayView @JvmOverloads constructor(
 
     private var imageView: ImageView? = null
 
+    // 画像のレイアウト
+    private var imageLayoutParams = LayoutParams(0, 0)
+
 
     // starts displaying this view as overlay
     @Synchronized
@@ -67,18 +70,26 @@ class OverlayView @JvmOverloads constructor(
         // 画像を指定
         imageView!!.setImageResource(R.drawable.cat)
 
-        // 画像の大きさ
-        val imageWidth = 300.toDp().toPx()
-        val imageHeight = 300.toDp().toPx()
-
-        val layoutParams = FrameLayout.LayoutParams(imageWidth, imageHeight)
-        layoutParams.gravity = Gravity.CENTER_HORIZONTAL
-        layoutParams.setMargins(
+        imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
+        imageLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
+        imageLayoutParams.setMargins(
             100.toDp().toPx(),
             200.toDp().toPx(),
             100.toDp().toPx(),
             100.toDp().toPx())
 
-        imageView!!.layoutParams = layoutParams
+        imageView!!.layoutParams = imageLayoutParams
+    }
+
+    fun zoomIn() {
+        imageLayoutParams.width += 100.toDp().toPx()
+        imageLayoutParams.height += 100.toDp().toPx()
+        imageView!!.layoutParams = imageLayoutParams
+    }
+
+    fun zoomOut() {
+        imageLayoutParams.width -= 100.toDp().toPx()
+        imageLayoutParams.height -= 100.toDp().toPx()
+        imageView!!.layoutParams = imageLayoutParams
     }
 }
