@@ -3,8 +3,6 @@ package com.example.windowmanagersample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.IBinder
 import android.widget.ImageView
 
 class OverlayService : Service() {
@@ -12,8 +10,11 @@ class OverlayService : Service() {
         private const val ACTION_SHOW = "SHOW"
         private const val  ACTION_HIDE = "HIDE"
 
+        private const val ACTION_ZOOM = "ZOOM"
         private const val ACTION_ZOOM_IN = "ZOOM_IN"
         private const val ACTION_ZOOM_OUT = "ZOOM_OUT"
+
+        private const val PROGRESS = "PROGRESS"
 
         fun start(context: Context) {
             val intent = Intent(context, OverlayService::class.java).apply {
@@ -39,6 +40,14 @@ class OverlayService : Service() {
         fun zoomOut(context: Context) {
             val intent = Intent(context, OverlayService::class.java).apply {
                 action = ACTION_ZOOM_OUT
+            }
+            context.startService(intent)
+        }
+
+        fun zoom(context: Context, progress: Int) {
+            val intent = Intent(context, OverlayService::class.java).apply {
+                action = ACTION_ZOOM
+                putExtra(PROGRESS, progress)
             }
             context.startService(intent)
         }
@@ -78,6 +87,10 @@ class OverlayService : Service() {
                 }
                 ACTION_ZOOM_OUT -> {
                     overlayView.zoomOut()
+                }
+                ACTION_ZOOM -> {
+                    val progress = it.getIntExtra(PROGRESS, 0)
+                    overlayView.zoom(progress)
                 }
                 else -> {
                     MyLog.e("Need action property to start ${OverlayService::class.java.simpleName}")

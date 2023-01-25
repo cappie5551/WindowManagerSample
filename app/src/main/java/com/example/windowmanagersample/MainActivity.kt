@@ -6,6 +6,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.windowmanagersample.databinding.ActivityMainBinding
 
@@ -33,8 +35,10 @@ class MainActivity : AppCompatActivity() {
                 MyLog.e(isChecked.toString())
                 if (isChecked) {
                     OverlayService.start(this@MainActivity)
+                    binding.sb.visibility = View.VISIBLE
                 } else {
                     OverlayService.stop(this@MainActivity)
+                    binding.sb.visibility = View.INVISIBLE
                 }
 
             }
@@ -49,6 +53,27 @@ class MainActivity : AppCompatActivity() {
         binding.ivZoomOutButton.setOnClickListener {
             OverlayService.zoomOut(this)
         }
+
+        // シークバーの設定
+        binding.sb.apply {
+            min = 100
+            max = 1000
+            progress = 500
+            visibility = View.INVISIBLE
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    OverlayService.zoom(this@MainActivity, progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+            }
+            )
+        }
+
     }
 
     private fun requestOverlayPermission() {

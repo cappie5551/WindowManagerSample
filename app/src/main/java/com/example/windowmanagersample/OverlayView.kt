@@ -70,7 +70,7 @@ class OverlayView @JvmOverloads constructor(
         // 画像を指定
         imageView!!.setImageResource(R.drawable.cat)
 
-        imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
+        imageLayoutParams = LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
         imageLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
         imageLayoutParams.setMargins(
             100.toDp().toPx(),
@@ -90,6 +90,12 @@ class OverlayView @JvmOverloads constructor(
     fun zoomOut() {
         imageLayoutParams.width -= 100.toDp().toPx()
         imageLayoutParams.height -= 100.toDp().toPx()
+        imageView!!.layoutParams = imageLayoutParams
+    }
+
+    fun zoom(progress: Int) {
+        imageLayoutParams.width = progress
+        imageLayoutParams.height = progress
         imageView!!.layoutParams = imageLayoutParams
     }
 }
