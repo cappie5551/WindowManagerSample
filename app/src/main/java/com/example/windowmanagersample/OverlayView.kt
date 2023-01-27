@@ -27,12 +27,14 @@ class OverlayView @JvmOverloads constructor(
 
     // settings for overlay view
     private val layoutParams = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        0, 80,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
         PixelFormat.TRANSLUCENT
     )
+
 
     private var imageView: ImageView? = null
 
@@ -63,6 +65,8 @@ class OverlayView @JvmOverloads constructor(
     private fun createImageView() {
         // ImageViewのインスタンスを作成
         imageView = ImageView(context)
+
+        layoutParams.gravity = Gravity.START
 
         // 画像を指定
         imageView!!.setImageResource(R.drawable.cat)
