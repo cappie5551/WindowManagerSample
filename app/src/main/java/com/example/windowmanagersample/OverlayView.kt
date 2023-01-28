@@ -84,6 +84,10 @@ class OverlayView @JvmOverloads constructor(
             startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
         }
 
+        imageView!!.setOnDragListener { v, event ->
+
+        }
+
         imageView!!.layoutParams = imageLayoutParams
     }
 
