@@ -3,9 +3,10 @@ package com.example.windowmanagersample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import android.widget.ImageView
 
-class OverlayService : Service() {
+class OverlayService : Service(), View.OnLongClickListener {
     companion object {
         private const val ACTION_SHOW = "SHOW"
         private const val  ACTION_HIDE = "HIDE"
@@ -106,5 +107,9 @@ class OverlayService : Service() {
     }
 
     override fun onBind(intent: Intent?): Nothing? = null
+
+    override fun onLongClick(v: View?): Boolean {
+        TODO("Not yet implemented")
+    }
 
 }
