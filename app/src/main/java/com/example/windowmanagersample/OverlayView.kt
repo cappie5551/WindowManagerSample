@@ -51,7 +51,6 @@ class OverlayView @JvmOverloads constructor(
 
 
     // starts displaying this view as overlay
-    @RequiresApi(Build.VERSION_CODES.R)
     @Synchronized
     fun show() {
         if (!this.isShown) {
@@ -71,7 +70,6 @@ class OverlayView @JvmOverloads constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun createImageView() {
         // ImageViewのインスタンスを作成
         imageView = ImageView(context)
@@ -90,7 +88,7 @@ class OverlayView @JvmOverloads constructor(
 //            100.toDp().toPx())
 
         imageView!!.setOnLongClickListener { view ->
-            MyLog.e("")
+            MyLog.e("setOnLongClickListener")
 //            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
 //            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
 //
@@ -131,9 +129,10 @@ class OverlayView @JvmOverloads constructor(
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION -> {
-                    MyLog.e("ACTION_DRAG_LOCATION")
                     currentX = event.x
                     currentY = event.y
+                    MyLog.e("ACTION_DRAG_LOCATION, x = $currentX, y = $currentY")
+
                     true
                 }
                 DragEvent.ACTION_DRAG_EXITED -> {

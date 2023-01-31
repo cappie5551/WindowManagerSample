@@ -69,6 +69,8 @@ class OverlayService : Service(), View.OnLongClickListener {
 
         overlayView = OverlayView.create(this)
         MyLog.e( "onCreate end")
+
+        overlayView.setOnLongClickListener(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -109,7 +111,8 @@ class OverlayService : Service(), View.OnLongClickListener {
     override fun onBind(intent: Intent?): Nothing? = null
 
     override fun onLongClick(v: View?): Boolean {
-        TODO("Not yet implemented")
+        MyLog.e("onLongClick")
+        return true
     }
 
 }
