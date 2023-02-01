@@ -87,14 +87,15 @@ class OverlayView @JvmOverloads constructor(
 //            100.toDp().toPx(),
 //            100.toDp().toPx())
 
-        imageView!!.setOnLongClickListener { view ->
+        this.setOnLongClickListener { view ->
             MyLog.e("setOnLongClickListener")
-//            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-//            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+            this.setBackgroundColor(0)
 //
 //            val x = imageView!!.pivotX
 //            val y = imageView!!.pivotY
-//            windowManager.updateViewLayout(this, layoutParams)
+            windowManager.updateViewLayout(this, layoutParams)
 //
 //            imageView!!.pivotX = x
 //            imageView!!.pivotY = y
@@ -113,7 +114,7 @@ class OverlayView @JvmOverloads constructor(
 //            tmpView.wi = windowManager.currentWindowMetrics.bounds.width()
 //            tmpView.height = windowManager.currentWindowMetrics.bounds.height()
 
-            startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
+            startDragAndDrop(null, View.DragShadowBuilder(imageView), imageView, 0)
         }
 
         imageView!!.setOnDragListener { v, event ->

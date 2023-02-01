@@ -6,9 +6,15 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.DragEvent
+import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat.startDragAndDrop
 import com.example.windowmanagersample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +23,10 @@ class MainActivity : AppCompatActivity() {
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 1
     }
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+
+    private var currentX = 0f
+    private var currentY = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +82,75 @@ class MainActivity : AppCompatActivity() {
             }
             )
         }
+
+        val imageView = ImageView(this)
+        // 画像を指定
+        imageView.setImageResource(R.drawable.cat)
+
+
+        val imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
+        imageLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
+        imageLayoutParams.setMargins(
+            100.toDp().toPx(),
+            200.toDp().toPx(),
+            100.toDp().toPx(),
+            100.toDp().toPx())
+
+        imageView.layoutParams = imageLayoutParams
+
+        imageView.setOnLongClickListener { view ->
+            binding.root.startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
+        }
+
+        binding.root.setOnDragListener { v, event ->
+            when(event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    MyLog.e("ACTION_DRAG_STARTED")
+
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    MyLog.e("ACTION_DRAG_ENTERED")
+
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    currentX = event.x
+                    currentY = event.y
+                    MyLog.e("ACTION_DRAG_LOCATION, x = $currentX, y = $currentY")
+
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    MyLog.e("ACTION_DRAG_EXITED")
+
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+//                    layoutParams.x = currentX.toInt()
+//                    layoutParams.y = currentY.toInt()
+//                    windowManager.updateViewLayout(this, layoutParams)
+                    MyLog.e("ACTION_DROP x = ${event.x}, y = ${event.y}")
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    MyLog.e("ACTION_DRAG_ENDED")
+//                    layoutParams.x = currentX.toInt()
+//                    layoutParams.y = currentY.toInt()
+//                    layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+//                    layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+//                    windowManager.updateViewLayout(this, layoutParams)
+                    true
+                }
+                else -> {
+                    MyLog.e("ACTION_DRAG_ENTERED")
+
+                    false
+                }
+            }
+        }
+
+        binding.root.addView(imageView)
 
     }
 
