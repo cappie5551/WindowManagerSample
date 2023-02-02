@@ -49,6 +49,8 @@ class OverlayView @JvmOverloads constructor(
     private var currentX = 0f
     private var currentY = 0f
 
+    var backGroundView : FrameLayout? = null
+
 
     // starts displaying this view as overlay
     @Synchronized
@@ -71,6 +73,8 @@ class OverlayView @JvmOverloads constructor(
     }
 
     private fun createImageView() {
+
+        layoutParams.gravity = Gravity.TOP or Gravity.START
         // ImageViewのインスタンスを作成
         imageView = ImageView(context)
 
@@ -81,6 +85,7 @@ class OverlayView @JvmOverloads constructor(
 
         imageLayoutParams = LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
 //        imageLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
+
 //        imageLayoutParams.setMargins(
 //            100.toDp().toPx(),
 //            200.toDp().toPx(),
@@ -88,10 +93,21 @@ class OverlayView @JvmOverloads constructor(
 //            100.toDp().toPx())
 
         this.setOnLongClickListener { view ->
+
+//            backGroundView = FrameLayout(context)
+//            val bgParams = WindowManager.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+//                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//                PixelFormat.TRANSLUCENT)
+            // 背景を設定
+//            windowManager.addView(backGroundView, bgParams)
+
             MyLog.e("setOnLongClickListener")
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-            this.setBackgroundColor(0)
+//            this.setBackgroundColor(0)
 //
 //            val x = imageView!!.pivotX
 //            val y = imageView!!.pivotY
@@ -114,47 +130,57 @@ class OverlayView @JvmOverloads constructor(
 //            tmpView.wi = windowManager.currentWindowMetrics.bounds.width()
 //            tmpView.height = windowManager.currentWindowMetrics.bounds.height()
 
-            startDragAndDrop(null, View.DragShadowBuilder(imageView), imageView, 0)
+            this.startDragAndDrop(null, View.DragShadowBuilder(imageView), imageView, 0)
+
+
+
+
         }
 
-        imageView!!.setOnDragListener { v, event ->
-            when(event.action) {
+        this.setOnDragListener { v, event ->
+            when(event. action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
-                    MyLog.e("ACTION_DRAG_STARTED")
+                    MyLog.e("ACTION_DRAG_STARTED x = ${v.x}, y = ${v.y}")
+
 
                     true
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
-                    MyLog.e("ACTION_DRAG_ENTERED")
+                    MyLog.e("ACTION_DRAG_ENTERED x = ${v.x}, y = ${v.y}")
+
 
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION -> {
-                    currentX = event.x
-                    currentY = event.y
-                    MyLog.e("ACTION_DRAG_LOCATION, x = $currentX, y = $currentY")
-
+                    MyLog.e("ACTION_DRAG_LOCATION x = ${event.x}, y = ${event.y}")
                     true
                 }
                 DragEvent.ACTION_DRAG_EXITED -> {
-                    MyLog.e("ACTION_DRAG_EXITED")
+                    MyLog.e("ACTION_DRAG_EXITED x = ${v.x}, y = ${v.y}")
 
                     true
                 }
                 DragEvent.ACTION_DROP -> {
-                    layoutParams.x = currentX.toInt()
-                    layoutParams.y = currentY.toInt()
+                    layoutParams.x = event.x.toInt() - 150
+                    layoutParams.y = event.y.toInt() - 150
+                    layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+                    layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
                     windowManager.updateViewLayout(this, layoutParams)
-                    MyLog.e("ACTION_DROP" + v.x + v.y)
+                    MyLog.e("ACTION_DROP x = ${event.x}, y = ${event.y}")
+                    MyLog.e("ACTION_DROP x = ${v.x}, y = ${v.y}")
+
                     true
                 }
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    MyLog.e("ACTION_DRAG_ENDED")
-                    layoutParams.x = currentX.toInt()
-                    layoutParams.y = currentY.toInt()
+                    MyLog.e("ACTION_DRAG_ENDED x = ${v.x}, y = ${v.y}")
+                    MyLog.e("ACTION_DRAG_ENDED x = ${event.x}, y = ${event.y}")
+
+//                    layoutParams.x = event.x.toInt()
+//                    layoutParams.y = event.y.toInt()
 //                    layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
 //                    layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-                    windowManager.updateViewLayout(this, layoutParams)
+//                    windowManager.updateViewLayout(this, layoutParams)
+//                    windowManager.removeView(backGroundView!!)
                     true
                 }
                 else -> {
