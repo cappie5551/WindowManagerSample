@@ -3,10 +3,15 @@ package com.example.windowmanagersample
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.PixelFormat
+import android.view.DragEvent
+import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.ImageView
 
-class OverlayService : Service(), View.OnLongClickListener {
+class OverlayService : Service(){
     companion object {
         private const val ACTION_SHOW = "SHOW"
         private const val  ACTION_HIDE = "HIDE"
@@ -59,7 +64,7 @@ class OverlayService : Service(), View.OnLongClickListener {
     }
 
     private lateinit var overlayView: OverlayView
-    private lateinit var ivCat: ImageView
+    private lateinit var windowManager: WindowManager
 
     override fun onCreate() {
         // Start as a foreground service
@@ -68,9 +73,9 @@ class OverlayService : Service(), View.OnLongClickListener {
         startForeground(1, notification)
 
         overlayView = OverlayView.create(this)
-        MyLog.e( "onCreate end")
 
-        overlayView.setOnLongClickListener(this)
+        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        MyLog.e( "onCreate end")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -78,11 +83,11 @@ class OverlayService : Service(), View.OnLongClickListener {
             when (it.action) {
                 ACTION_SHOW -> {
                     isActive = true
-                    overlayView.show()
+                    showOverlayView()
                 }
                 ACTION_HIDE -> {
                     isActive = false
-                    overlayView.hide()
+                    hideOverlayView()
                     stopSelf()
                 }
                 ACTION_ZOOM_IN -> {
@@ -103,16 +108,83 @@ class OverlayService : Service(), View.OnLongClickListener {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private fun showOverlayView() {
+        val imageView = ImageView(this)
+        imageView.setImageResource(R.drawable.cat)
+
+        // TODO: 画像サイズをshared preferencesで管理する
+        val imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
+        imageView.layoutParams = imageLayoutParams
+
+        val layoutParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            0, 80,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+
+        layoutParams.gravity = Gravity.TOP or Gravity.START
+
+        overlayView.setOnLongClickListener { _ ->
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+            windowManager.updateViewLayout(overlayView, layoutParams)
+
+            overlayView.startDragAndDrop(null, View.DragShadowBuilder(imageView), imageView, 0)
+        }
+
+
+        overlayView.setOnDragListener { v, event ->
+            when(event. action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    MyLog.e("ACTION_DRAG_LOCATION x = ${event.x}, y = ${event.y}")
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    layoutParams.x = event.x.toInt() - 150
+                    layoutParams.y = event.y.toInt() - 150
+                    layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+                    layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+                    windowManager.updateViewLayout(overlayView, layoutParams)
+                    MyLog.e("ACTION_DROP x = ${event.x}, y = ${event.y}")
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    MyLog.e("ACTION_DRAG_ENDED x = ${v.x}, y = ${v.y}")
+                    MyLog.e("ACTION_DRAG_ENDED x = ${event.x}, y = ${event.y}")
+                    true
+                }
+                else -> {
+                    MyLog.e("ACTION_DRAG_ENTERED")
+
+                    false
+                }
+            }
+        }
+
+        overlayView.addView(imageView)
+        windowManager.addView(overlayView, layoutParams)
+    }
+
+    private fun hideOverlayView() {
+        windowManager.removeView(overlayView)
+    }
+
     // Cleans up views just in case
     override fun onDestroy() {
-        overlayView.hide()
+        hideOverlayView()
     }
 
     override fun onBind(intent: Intent?): Nothing? = null
-
-    override fun onLongClick(v: View?): Boolean {
-        MyLog.e("onLongClick")
-        return true
-    }
-
 }
