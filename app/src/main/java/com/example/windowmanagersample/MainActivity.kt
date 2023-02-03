@@ -83,74 +83,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        val imageView = ImageView(this)
-        // 画像を指定
-        imageView.setImageResource(R.drawable.cat)
-
-
-        val imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
-        imageLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
-        imageLayoutParams.setMargins(
-            100.toDp().toPx(),
-            200.toDp().toPx(),
-            100.toDp().toPx(),
-            100.toDp().toPx())
-
-        imageView.layoutParams = imageLayoutParams
-
-        imageView.setOnLongClickListener { view ->
-            binding.root.startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
-        }
-
-        binding.root.setOnDragListener { v, event ->
-            when(event.action) {
-                DragEvent.ACTION_DRAG_STARTED -> {
-                    MyLog.e("ACTION_DRAG_STARTED")
-
-                    true
-                }
-                DragEvent.ACTION_DRAG_ENTERED -> {
-                    MyLog.e("ACTION_DRAG_ENTERED")
-
-                    true
-                }
-                DragEvent.ACTION_DRAG_LOCATION -> {
-                    currentX = event.x
-                    currentY = event.y
-                    MyLog.e("ACTION_DRAG_LOCATION, x = $currentX, y = $currentY")
-
-                    true
-                }
-                DragEvent.ACTION_DRAG_EXITED -> {
-                    MyLog.e("ACTION_DRAG_EXITED")
-
-                    true
-                }
-                DragEvent.ACTION_DROP -> {
-//                    layoutParams.x = currentX.toInt()
-//                    layoutParams.y = currentY.toInt()
-//                    windowManager.updateViewLayout(this, layoutParams)
-                    MyLog.e("ACTION_DROP x = ${event.x}, y = ${event.y}")
-                    true
-                }
-                DragEvent.ACTION_DRAG_ENDED -> {
-                    MyLog.e("ACTION_DRAG_ENDED")
-//                    layoutParams.x = currentX.toInt()
-//                    layoutParams.y = currentY.toInt()
-//                    layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-//                    layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-//                    windowManager.updateViewLayout(this, layoutParams)
-                    true
-                }
-                else -> {
-                    MyLog.e("ACTION_DRAG_ENTERED")
-
-                    false
-                }
-            }
-        }
-
-        binding.root.addView(imageView)
 
     }
 
@@ -173,20 +105,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         getContent.launch(intent)
-
-        // 古い方法
-//        startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
-//            if (!isOverlayGranted()) {
-//                // オーバーレイ設定画面から戻ってきてもオーバーレイが許可されていない場合はアプリを終了する
-//                finish()
-//            }
-//        }
-//    }
 
     private fun isOverlayGranted() =
         Settings.canDrawOverlays(this)
