@@ -18,15 +18,8 @@ import androidx.core.view.ViewCompat.startDragAndDrop
 import com.example.windowmanagersample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        // ID for the runtime permission dialog
-        private const val OVERLAY_PERMISSION_REQUEST_CODE = 1
-    }
 
     private lateinit var binding: ActivityMainBinding
-
-    private var currentX = 0f
-    private var currentY = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
