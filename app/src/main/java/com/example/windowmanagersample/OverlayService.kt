@@ -63,16 +63,21 @@ class OverlayService : Service(){
             private set
     }
 
-    private lateinit var overlayView: OverlayView
     private lateinit var windowManager: WindowManager
 
+    private lateinit var overlayView: FrameLayout
+    private lateinit var overlayViewLayoutParams: WindowManager.LayoutParams
+
+
+    private lateinit var imageView: ImageView
+
     override fun onCreate() {
-        // Start as a foreground service
         MyLog.e( "onCreate start")
         val notification = MyNotification.build(this)
         startForeground(1, notification)
 
-        overlayView = OverlayView.create(this)
+        overlayView = View.inflate(this, R.layout.overlay_view, null) as FrameLayout
+        imageView = overlayView.findViewById(R.id.cat)
 
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         MyLog.e( "onCreate end")
@@ -87,18 +92,17 @@ class OverlayService : Service(){
                 }
                 ACTION_HIDE -> {
                     isActive = false
-                    hideOverlayView()
                     stopSelf()
                 }
                 ACTION_ZOOM_IN -> {
-                    overlayView.zoomIn()
+//                    overlayView.zoomIn()
                 }
                 ACTION_ZOOM_OUT -> {
-                    overlayView.zoomOut()
+//                    overlayView.zoomOut()
                 }
                 ACTION_ZOOM -> {
                     val progress = it.getIntExtra(PROGRESS, 0)
-                    overlayView.zoom(progress)
+//                    overlayView.zoom(progress)
                 }
                 else -> {
                     MyLog.e("Need action property to start ${OverlayService::class.java.simpleName}")
@@ -109,17 +113,12 @@ class OverlayService : Service(){
     }
 
     private fun showOverlayView() {
-        val imageView = ImageView(this)
-        imageView.setImageResource(R.drawable.cat)
 
         // TODO: 画像サイズをshared preferencesで管理する
-        val imageLayoutParams = FrameLayout.LayoutParams(300.toDp().toPx(), 300.toDp().toPx())
-        imageView.layoutParams = imageLayoutParams
 
         val layoutParams = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            0, 80,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
@@ -128,17 +127,19 @@ class OverlayService : Service(){
         layoutParams.gravity = Gravity.TOP or Gravity.START
 
         overlayView.setOnLongClickListener { _ ->
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-            windowManager.updateViewLayout(overlayView, layoutParams)
+
+            imageView.visibility = View.INVISIBLE
 
             overlayView.startDragAndDrop(null, View.DragShadowBuilder(imageView), imageView, 0)
         }
 
-
         overlayView.setOnDragListener { v, event ->
             when(event. action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
+                    // setOnLongClickListener で行うとimageVIewのINVISIBLEが間に合わずちらついてしまう
+                    layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+                    layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+                    windowManager.updateViewLayout(overlayView, layoutParams)
                     true
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
@@ -152,11 +153,13 @@ class OverlayService : Service(){
                     true
                 }
                 DragEvent.ACTION_DROP -> {
-                    layoutParams.x = event.x.toInt() - 150
-                    layoutParams.y = event.y.toInt() - 150
+                    // eventのいちは画像の真ん中
+                    layoutParams.x = event.x.toInt() - 75.toPx()
+                    layoutParams.y = event.y.toInt() - 75.toPx()
                     layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
                     layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
                     windowManager.updateViewLayout(overlayView, layoutParams)
+                    imageView.visibility = View.VISIBLE
                     MyLog.e("ACTION_DROP x = ${event.x}, y = ${event.y}")
                     true
                 }
@@ -167,24 +170,37 @@ class OverlayService : Service(){
                 }
                 else -> {
                     MyLog.e("ACTION_DRAG_ENTERED")
-
                     false
                 }
             }
         }
 
-        overlayView.addView(imageView)
         windowManager.addView(overlayView, layoutParams)
-    }
-
-    private fun hideOverlayView() {
-        windowManager.removeView(overlayView)
     }
 
     // Cleans up views just in case
     override fun onDestroy() {
-        hideOverlayView()
+        windowManager.removeView(overlayView)
+
     }
 
     override fun onBind(intent: Intent?): Nothing? = null
+
+    //    fun zoomIn() {
+//        imageLayoutParams.width += 100.toDp().toPx()
+//        imageLayoutParams.height += 100.toDp().toPx()
+//        imageView.layoutParams = imageLayoutParams
+//    }
+//
+//    fun zoomOut() {
+//        imageLayoutParams.width -= 100.toDp().toPx()
+//        imageLayoutParams.height -= 100.toDp().toPx()
+//        imageView.layoutParams = imageLayoutParams
+//    }
+//
+//    fun zoom(progress: Int) {
+//        imageLayoutParams.width = progress
+//        imageLayoutParams.height = progress
+//        imageView.layoutParams = imageLayoutParams
+//    }
 }

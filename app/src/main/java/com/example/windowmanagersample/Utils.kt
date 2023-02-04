@@ -8,6 +8,3 @@ fun Int.toDp(): Int =
 fun Int.toPx(): Int =
     (this * Resources.getSystem().displayMetrics.density).toInt()
 
-object Utils {
-
-}
